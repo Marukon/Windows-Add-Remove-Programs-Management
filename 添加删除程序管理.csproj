@@ -2,10 +2,8 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <!-- Win10/11 版：.NET 10 (64 位) -->
-    <TargetFramework>net10.0-windows</TargetFramework>
-    <PlatformTarget>x64</PlatformTarget>
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <!-- 双目标支持：Win10/11 版用 .NET 10（64 位）；Win7 版用 .NET Framework 3.5.1（32 位，Win7 系统内置免装运行库） -->
+    <TargetFrameworks>net10.0-windows;net35</TargetFrameworks>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
     <UseWindowsForms>true</UseWindowsForms>
@@ -19,14 +17,31 @@
     <Company>布布</Company>
     <Authors>布布</Authors>
     <Copyright>Copyright © 布布</Copyright>
+  </PropertyGroup>
 
+  <!-- Win10 / Win11 (.NET 10 x64) -->
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net10.0-windows'">
+    <PlatformTarget>x64</PlatformTarget>
     <!-- 发布形态：单文件 + 依赖框架(目标机需安装 .NET 10 运行时，不自带) -->
     <PublishSingleFile>true</PublishSingleFile>
     <SelfContained>false</SelfContained>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
 
-  <!-- .NET 10 不需要 .NET Framework 3.5 的 app.config，避免输出无用的 dll.config -->
-  <ItemGroup>
+  <!-- Windows 7 (.NET Framework 3.5.1 x86) -->
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net35'">
+    <PlatformTarget>x86</PlatformTarget>
+    <!-- 3.5 没有 System.Threading.Tasks 等命名空间，关闭自动 global using，改用手写 GlobalUsings.cs -->
+    <ImplicitUsings>disable</ImplicitUsings>
+  </PropertyGroup>
+
+  <!-- .NET Framework 3.5 引用程序集（无需本机安装旧版 SDK，自动从 NuGet 还原，现代 .NET SDK 即可直接编译） -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net35'">
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net35" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+
+  <!-- 仅在 .NET 10 编译时排除 .NET Framework 专用的 app.config，避免输出冗余的 dll.config -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0-windows'">
     <None Remove="app.config" />
   </ItemGroup>
 
