@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <!-- Win10/11 版：.NET 10 (64 位) -->
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <PlatformTarget>x64</PlatformTarget>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <!-- 内嵌图标：同时作为 exe 在资源管理器中的图标，以及窗体标题栏图标 -->
+    <ApplicationIcon>app.ico</ApplicationIcon>
+    <!-- 作者 / 文件信息 -->
+    <AssemblyTitle>添加/删除程序管理器</AssemblyTitle>
+    <Product>添加/删除程序管理器</Product>
+    <Company>布布</Company>
+    <Authors>布布</Authors>
+    <Copyright>Copyright © 布布</Copyright>
+
+    <!-- 发布形态：单文件 + 依赖框架(目标机需安装 .NET 10 运行时，不自带) -->
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>false</SelfContained>
+  </PropertyGroup>
+
+  <!-- .NET 10 不需要 .NET Framework 3.5 的 app.config，避免输出无用的 dll.config -->
+  <ItemGroup>
+    <None Remove="app.config" />
+  </ItemGroup>
+
+</Project>
